@@ -1,41 +1,120 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>GCASH FREE CREDIT</title>
-    <link rel="stylesheet" href="style.css">
-  </head>
-  <body>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doodle Battles</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .container {
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        h1 {
+            color: #ff6b6b;
+            font-size: 3rem;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn {
+            background-color: #4ecdc4;
+            border: none;
+            color: white;
+            padding: 15px 30px;
+            margin: 10px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            font-family: inherit;
+            width: 80%;
+            max-width: 300px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            background-color: #3dbeb6;
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .btn-vs-computer {
+            background-color: #ff9f1c;
+        }
+        
+        .btn-vs-computer:hover {
+            background-color: #e68a00;
+        }
+        
+        .game-code-input {
+            margin-top: 20px;
+            display: none;
+        }
+        
+        input {
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 50px;
+            font-size: 1rem;
+            width: 60%;
+            max-width: 200px;
+            text-align: center;
+            margin-right: 10px;
+        }
+        
+        .how-to-play {
+            margin-top: 30px;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
     <div class="container">
-      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTwzE4ez9tm0qTZ6D9gevJ_ses2NLI-VQqcLw&usqp=CAU" alt="GCash Logo" class="logo">
-      <h1>GCASH FREE CREDIT</h1>
-      <p>Claim your FREE ₱100 now!</p>
-
-      <input type="text" id="gcashNumber" placeholder="Enter Gcash Account Number">
-
-      <button id="claimButton">Claim</button>
-
-      <div class="warning-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-triangle-fill" viewBox="0 0 16 16">
-          <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5z"/>
-        </svg>
-      </div>
-
-      <div class="warning-message">
-        Oh no! Di mo pwede i claim ang ₱100 kasi walang easy money ang kiffy kenemereferu.
-      </div>
-
-      <div class="progress-bar">
-        <div class="progress-bar-fill"></div>
-      </div>
-
-      <div class="loading-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-clockwise" viewBox="0 0 16 16">
-          <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
-          <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.38 2.38a.25.25 0 0 1 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
-        </svg>
-      </div>
-
+        <h1>Doodle Battles</h1>
+        <button id="playOnline" class="btn">Play Online (1v1)</button>
+        <button id="playComputer" class="btn btn-vs-computer">VS Computer</button>
+        
+        <div id="gameCodeContainer" class="game-code-input">
+            <input type="text" id="gameCodeInput" placeholder="Enter game code" maxlength="6">
+            <button id="joinGame" class="btn">Join Game</button>
+        </div>
+        
+        <div class="how-to-play">
+            <h3>How to Play:</h3>
+            <ol>
+                <li>Draw the given prompt as best you can</li>
+                <li>Compete in 5 rounds with increasing difficulty</li>
+                <li>Our "AI" will judge your drawings</li>
+                <li>Winner is declared after all rounds!</li>
+            </ol>
+        </div>
     </div>
-    <script src="script.js"></script>
-  </body>
+
+    <script src="js/game.js"></script>
+</body>
 </html>
