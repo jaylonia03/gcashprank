@@ -1,0 +1,52 @@
+/* Base styles */
+body {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.btn {
+    background-color: #4ecdc4;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s;
+}
+
+.btn:hover {
+    background-color: #3dbeb6;
+}
+
+/* Game page specific styles */
+.drawings-comparison {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin: 20px 0;
+}
+
+.result {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    canvas {
+        width: 100%;
+        height: auto;
+    }
+    
+    .drawings-comparison {
+        flex-direction: column;
+    }
+    
+    .drawings-comparison div {
+        margin-bottom: 20px;
+    }
+}
