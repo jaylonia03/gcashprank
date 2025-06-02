@@ -8,4 +8,35 @@
 </head>
 <body>
     <div class="game-container">
-        <canvas id="gameCanvas" width="
+        <canvas id="gameCanvas"></canvas>
+        <div class="ui-overlay">
+            <div class="hero-select">
+                <h2>Select Your Hero</h2>
+                <div class="hero-grid" id="heroGrid"></div>
+            </div>
+            <div class="game-ui hidden">
+                <div class="stats">
+                    <div class="health-bar">
+                        <div class="health-fill" id="playerHealth"></div>
+                    </div>
+                    <div class="mana-bar">
+                        <div class="mana-fill" id="playerMana"></div>
+                    </div>
+                    <div class="level">Level: <span id="playerLevel">1</span></div>
+                    <div class="gold">Gold: <span id="playerGold">300</span></div>
+                </div>
+                <div class="abilities">
+                    <button class="ability" id="ability1">Q</button>
+                    <button class="ability" id="ability2">W</button>
+                    <button class="ability" id="ability3">E</button>
+                    <button class="ability" id="ultimate">R</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="js/utils.js"></script>
+    <script src="js/heroes.js"></script>
+    <script src="js/items.js"></script>
+    <script src="js/game.js"></script>
+</body>
+</html>
