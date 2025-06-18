@@ -3,60 +3,834 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bank Spending Tracker Widget Maker</title>
-    <meta name="description" content="Create home screen widgets for your bank spending tracking">
-    <meta name="theme-color" content="#4f46e5">
-    <link rel="manifest" href="manifest.json">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="assets/css/style.css">
+    <title>SW Tracker - Spending Tracker for SW</title>
+    <style>
+        :root {
+            --primary: rgba(0, 122, 255, 0.8);
+            --secondary: rgba(88, 86, 214, 0.8);
+            --success: rgba(52, 199, 89, 0.8);
+            --danger: rgba(255, 59, 48, 0.8);
+            --warning: rgba(255, 204, 0, 0.8);
+            --dark: rgba(28, 28, 30, 0.8);
+            --light: rgba(242, 242, 247, 0.8);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .app-container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header {
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .back-btn {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .total-balance {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            margin: 15px;
+            border-radius: 15px;
+            text-align: center;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .total-balance h2 {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .total-balance .amount {
+            font-size: 32px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .bank-list {
+            padding: 0 15px;
+        }
+
+        .bank-card {
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(5px);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: transform 0.2s;
+        }
+
+        .bank-card:active {
+            transform: scale(0.98);
+        }
+
+        .bank-icon {
+            font-size: 30px;
+            margin-right: 15px;
+            width: 40px;
+            text-align: center;
+        }
+
+        .bank-info {
+            flex: 1;
+        }
+
+        .bank-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .bank-balance {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-add {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-deduct {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal-content {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            width: 90%;
+            max-width: 400px;
+            transform: translateY(20px);
+            transition: transform 0.3s;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .modal.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            background: rgba(255, 255, 255, 0.7);
+            font-size: 16px;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .nav-bar {
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(5px);
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: #666;
+            font-size: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .nav-btn i {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .nav-btn.active {
+            color: var(--primary);
+        }
+
+        .transactions-page {
+            display: none;
+            padding: 15px;
+        }
+
+        .transactions-page.active {
+            display: block;
+        }
+
+        .search-bar {
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 12px 15px 12px 40px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            background: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+
+        .search-bar i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        .transaction-item {
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(5px);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .transaction-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .transaction-bank {
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+
+        .transaction-bank i {
+            margin-right: 8px;
+            font-size: 18px;
+        }
+
+        .transaction-amount {
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .positive {
+            color: var(--success);
+        }
+
+        .negative {
+            color: var(--danger);
+        }
+
+        .transaction-date {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .transaction-notes {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .transaction-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+
+        .delete-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .reset-btn {
+            background: var(--warning);
+            color: #333;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-weight: 600;
+            margin: 15px auto;
+            display: block;
+            cursor: pointer;
+        }
+
+        .home-page {
+            padding-bottom: 70px;
+        }
+
+        .no-transactions {
+            text-align: center;
+            padding: 40px 0;
+            color: #666;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Bank Spending Tracker</h1>
-            <button id="installBtn" class="install-btn hidden">
-                <i class="fas fa-download"></i> Install App
-            </button>
-        </header>
-        
-        <div class="banks-grid" id="banksGrid">
-            <!-- Banks will be added here by JavaScript -->
+    <div class="app-container">
+        <div class="header">
+            <button class="back-btn" id="backBtn" style="display: none;">←</button>
+            <h1 id="pageTitle">SW Tracker</h1>
+            <p id="pageSubtitle">Spending Tracker for SW</p>
         </div>
-        
-        <div class="widget-preview" id="widgetPreview">
-            <div class="preview-header">
-                <h2 class="preview-title">Widget Preview</h2>
-                <div class="resize-controls">
-                    <button class="resize-btn" id="decreaseSize"><i class="fas fa-search-minus"></i></button>
-                    <button class="resize-btn" id="increaseSize"><i class="fas fa-search-plus"></i></button>
+
+        <div class="home-page" id="homePage">
+            <div class="total-balance">
+                <h2>Total Balance</h2>
+                <div class="amount" id="totalBalance">₱0.00</div>
+            </div>
+
+            <div class="bank-list" id="bankList">
+                <!-- Banks will be added here dynamically -->
+            </div>
+        </div>
+
+        <div class="transactions-page" id="transactionsPage">
+            <div class="search-bar">
+                <i>🔍</i>
+                <input type="text" id="searchInput" placeholder="Search transactions...">
+            </div>
+            <div id="transactionsList">
+                <!-- Transactions will be added here dynamically -->
+            </div>
+            <button class="reset-btn" id="resetBtn">Reset All Data</button>
+        </div>
+
+        <div class="modal" id="transactionModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modalTitle">Add Funds</h2>
+                    <button class="close-btn" id="closeModalBtn">×</button>
                 </div>
+                <form id="transactionForm">
+                    <input type="hidden" id="currentBank">
+                    <input type="hidden" id="transactionType">
+                    <div class="form-group">
+                        <label for="amount">Amount (₱)</label>
+                        <input type="number" id="amount" class="form-control" placeholder="0.00" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="notes">Notes</label>
+                        <input type="text" id="notes" class="form-control" placeholder="e.g. Received from casino">
+                    </div>
+                    <button type="submit" class="submit-btn" id="submitBtn">Submit</button>
+                </form>
             </div>
-            
-            <div class="widget-container" id="widgetContainer">
-                <div class="widget" id="widgetDisplay">
-                    <!-- Widget content will be added here -->
-                </div>
-            </div>
-            
-            <div class="transaction-controls">
-                <input type="number" id="transactionAmount" placeholder="Amount" min="0" step="0.01">
-                <input type="text" id="transactionDesc" placeholder="Description">
-                <div class="btn-group">
-                    <button id="addFunds" class="btn success"><i class="fas fa-plus"></i> Add</button>
-                    <button id="deductFunds" class="btn danger"><i class="fas fa-minus"></i> Deduct</button>
-                </div>
-            </div>
-            
-            <div class="transactions-list" id="transactionsList">
-                <!-- Transactions will be added here -->
-            </div>
-            
-            <button id="saveWidget" class="btn primary">Save Widget to Home Screen</button>
+        </div>
+
+        <div class="nav-bar">
+            <button class="nav-btn active" id="homeBtn">
+                <i>🏠</i>
+                <span>Home</span>
+            </button>
+            <button class="nav-btn" id="transactionsBtn">
+                <i>📋</i>
+                <span>Transactions</span>
+            </button>
         </div>
     </div>
 
-    <script src="assets/js/app.js"></script>
-    <script src="assets/js/widget.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const homePage = document.getElementById('homePage');
+            const transactionsPage = document.getElementById('transactionsPage');
+            const homeBtn = document.getElementById('homeBtn');
+            const transactionsBtn = document.getElementById('transactionsBtn');
+            const backBtn = document.getElementById('backBtn');
+            const bankList = document.getElementById('bankList');
+            const totalBalance = document.getElementById('totalBalance');
+            const transactionsList = document.getElementById('transactionsList');
+            const searchInput = document.getElementById('searchInput');
+            const transactionModal = document.getElementById('transactionModal');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            const modalTitle = document.getElementById('modalTitle');
+            const transactionForm = document.getElementById('transactionForm');
+            const amountInput = document.getElementById('amount');
+            const notesInput = document.getElementById('notes');
+            const currentBankInput = document.getElementById('currentBank');
+            const transactionTypeInput = document.getElementById('transactionType');
+            const submitBtn = document.getElementById('submitBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const pageTitle = document.getElementById('pageTitle');
+            const pageSubtitle = document.getElementById('pageSubtitle');
+
+            // Banks data
+            const banks = [
+                { id: 'gcash', name: 'Gcash', emoji: '📱', balance: 0 },
+                { id: 'maya', name: 'Maya', emoji: '💳', balance: 0 },
+                { id: 'atome', name: 'Atome', emoji: '🔗', balance: 0 },
+                { id: 'gotyme', name: 'Gotyme', emoji: '🏦', balance: 0 },
+                { id: 'cimb', name: 'CIMB', emoji: '🏛️', balance: 0 },
+                { id: 'paypal', name: 'Paypal', emoji: '🌐', balance: 0 },
+                { id: 'seabank', name: 'Seabank', emoji: '⚓', balance: 0 },
+                { id: 'unionbank', name: 'Unionbank', emoji: '🔷', balance: 0 },
+                { id: 'cebuana', name: 'Cebuana e-savings', emoji: '🏧', balance: 0 },
+                { id: 'wise', name: 'Wise', emoji: '💱', balance: 0 }
+            ];
+
+            // Transactions data
+            let transactions = [];
+
+            // Initialize the app
+            function init() {
+                loadData();
+                renderBanks();
+                updateTotalBalance();
+                renderTransactions();
+                setupEventListeners();
+            }
+
+            // Load data from localStorage
+            function loadData() {
+                const savedBanks = localStorage.getItem('swTracker_banks');
+                const savedTransactions = localStorage.getItem('swTracker_transactions');
+
+                if (savedBanks) {
+                    const parsedBanks = JSON.parse(savedBanks);
+                    banks.forEach(bank => {
+                        const savedBank = parsedBanks.find(b => b.id === bank.id);
+                        if (savedBank) {
+                            bank.balance = savedBank.balance;
+                        }
+                    });
+                }
+
+                if (savedTransactions) {
+                    transactions = JSON.parse(savedTransactions);
+                }
+            }
+
+            // Save data to localStorage
+            function saveData() {
+                localStorage.setItem('swTracker_banks', JSON.stringify(banks));
+                localStorage.setItem('swTracker_transactions', JSON.stringify(transactions));
+            }
+
+            // Render banks list
+            function renderBanks() {
+                bankList.innerHTML = '';
+                banks.forEach(bank => {
+                    const bankCard = document.createElement('div');
+                    bankCard.className = 'bank-card';
+                    bankCard.innerHTML = `
+                        <div class="bank-icon">${bank.emoji}</div>
+                        <div class="bank-info">
+                            <div class="bank-name">${bank.name}</div>
+                            <div class="bank-balance">₱${bank.balance.toFixed(2)}</div>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="btn btn-add" data-bank="${bank.id}">+</button>
+                            <button class="btn btn-deduct" data-bank="${bank.id}">-</button>
+                        </div>
+                    `;
+                    bankList.appendChild(bankCard);
+                });
+            }
+
+            // Update total balance
+            function updateTotalBalance() {
+                const total = banks.reduce((sum, bank) => sum + bank.balance, 0);
+                totalBalance.textContent = `₱${total.toFixed(2)}`;
+            }
+
+            // Render transactions
+            function renderTransactions(filter = '') {
+                transactionsList.innerHTML = '';
+
+                if (transactions.length === 0) {
+                    transactionsList.innerHTML = '<div class="no-transactions">No transactions yet</div>';
+                    return;
+                }
+
+                let filteredTransactions = transactions;
+                if (filter) {
+                    const searchTerm = filter.toLowerCase();
+                    filteredTransactions = transactions.filter(t => 
+                        t.bankName.toLowerCase().includes(searchTerm) || 
+                        t.notes.toLowerCase().includes(searchTerm) ||
+                        t.amount.toString().includes(searchTerm)
+                    );
+                }
+
+                if (filteredTransactions.length === 0) {
+                    transactionsList.innerHTML = '<div class="no-transactions">No matching transactions found</div>';
+                    return;
+                }
+
+                filteredTransactions.forEach((transaction, index) => {
+                    const transactionItem = document.createElement('div');
+                    transactionItem.className = 'transaction-item';
+                    transactionItem.innerHTML = `
+                        <div class="transaction-header">
+                            <div class="transaction-bank">
+                                <i>${getBankEmoji(transaction.bankId)}</i>
+                                ${transaction.bankName}
+                            </div>
+                            <div class="transaction-amount ${transaction.type === 'add' ? 'positive' : 'negative'}">
+                                ${transaction.type === 'add' ? '+' : '-'}₱${transaction.amount.toFixed(2)}
+                            </div>
+                        </div>
+                        <div class="transaction-date">${new Date(transaction.date).toLocaleString()}</div>
+                        <div class="transaction-notes">${transaction.notes || 'No notes'}</div>
+                        <div class="transaction-actions">
+                            <button class="delete-btn" data-index="${index}">Delete</button>
+                        </div>
+                    `;
+                    transactionsList.appendChild(transactionItem);
+                });
+
+                // Add event listeners to delete buttons
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const index = parseInt(this.getAttribute('data-index'));
+                        deleteTransaction(index);
+                    });
+                });
+            }
+
+            // Get bank emoji by ID
+            function getBankEmoji(bankId) {
+                const bank = banks.find(b => b.id === bankId);
+                return bank ? bank.emoji : '🏦';
+            }
+
+            // Setup event listeners
+            function setupEventListeners() {
+                // Navigation
+                homeBtn.addEventListener('click', () => {
+                    showHomePage();
+                    homeBtn.classList.add('active');
+                    transactionsBtn.classList.remove('active');
+                });
+
+                transactionsBtn.addEventListener('click', () => {
+                    showTransactionsPage();
+                    transactionsBtn.classList.add('active');
+                    homeBtn.classList.remove('active');
+                });
+
+                backBtn.addEventListener('click', () => {
+                    if (transactionsPage.classList.contains('active')) {
+                        showHomePage();
+                        homeBtn.classList.add('active');
+                        transactionsBtn.classList.remove('active');
+                    }
+                });
+
+                // Bank card buttons
+                bankList.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('btn-add')) {
+                        openTransactionModal(e.target.getAttribute('data-bank'), 'add');
+                    } else if (e.target.classList.contains('btn-deduct')) {
+                        openTransactionModal(e.target.getAttribute('data-bank'), 'deduct');
+                    }
+                });
+
+                // Modal
+                closeModalBtn.addEventListener('click', closeTransactionModal);
+                transactionForm.addEventListener('submit', handleTransactionSubmit);
+
+                // Search
+                searchInput.addEventListener('input', (e) => {
+                    renderTransactions(e.target.value);
+                });
+
+                // Reset
+                resetBtn.addEventListener('click', resetData);
+            }
+
+            // Show home page
+            function showHomePage() {
+                homePage.style.display = 'block';
+                transactionsPage.style.display = 'none';
+                backBtn.style.display = 'none';
+                pageTitle.textContent = 'SW Tracker';
+                pageSubtitle.textContent = 'Spending Tracker for SW';
+            }
+
+            // Show transactions page
+            function showTransactionsPage() {
+                homePage.style.display = 'none';
+                transactionsPage.style.display = 'block';
+                backBtn.style.display = 'block';
+                pageTitle.textContent = 'Transactions';
+                pageSubtitle.textContent = 'All your transactions';
+            }
+
+            // Open transaction modal
+            function openTransactionModal(bankId, type) {
+                const bank = banks.find(b => b.id === bankId);
+                if (!bank) return;
+
+                currentBankInput.value = bankId;
+                transactionTypeInput.value = type;
+                modalTitle.textContent = type === 'add' ? `Add to ${bank.name}` : `Deduct from ${bank.name}`;
+                submitBtn.textContent = type === 'add' ? 'Add Funds' : 'Deduct Funds';
+                submitBtn.style.background = type === 'add' ? 
+                    'linear-gradient(135deg, var(--success) 0%, rgba(52, 199, 89, 0.6) 100%)' : 
+                    'linear-gradient(135deg, var(--danger) 0%, rgba(255, 59, 48, 0.6) 100%)';
+                
+                amountInput.value = '';
+                notesInput.value = '';
+                transactionModal.classList.add('active');
+            }
+
+            // Close transaction modal
+            function closeTransactionModal() {
+                transactionModal.classList.remove('active');
+            }
+
+            // Handle transaction submission
+            function handleTransactionSubmit(e) {
+                e.preventDefault();
+                
+                const bankId = currentBankInput.value;
+                const type = transactionTypeInput.value;
+                const amount = parseFloat(amountInput.value);
+                const notes = notesInput.value;
+                
+                if (isNaN(amount) || amount <= 0) {
+                    alert('Please enter a valid amount');
+                    return;
+                }
+                
+                const bank = banks.find(b => b.id === bankId);
+                if (!bank) return;
+                
+                if (type === 'deduct' && amount > bank.balance) {
+                    alert('Insufficient balance');
+                    return;
+                }
+                
+                // Update bank balance
+                if (type === 'add') {
+                    bank.balance += amount;
+                } else {
+                    bank.balance -= amount;
+                }
+                
+                // Create transaction
+                const transaction = {
+                    bankId,
+                    bankName: bank.name,
+                    type,
+                    amount,
+                    notes,
+                    date: new Date().toISOString()
+                };
+                
+                transactions.unshift(transaction);
+                
+                // Update UI and save data
+                renderBanks();
+                updateTotalBalance();
+                renderTransactions();
+                saveData();
+                
+                closeTransactionModal();
+            }
+
+            // Delete transaction
+            function deleteTransaction(index) {
+                const transaction = transactions[index];
+                const bank = banks.find(b => b.id === transaction.bankId);
+                
+                if (!bank || !transaction) return;
+                
+                // Reverse the transaction
+                if (transaction.type === 'add') {
+                    bank.balance -= transaction.amount;
+                } else {
+                    bank.balance += transaction.amount;
+                }
+                
+                // Remove transaction
+                transactions.splice(index, 1);
+                
+                // Update UI and save data
+                renderBanks();
+                updateTotalBalance();
+                renderTransactions(searchInput.value);
+                saveData();
+            }
+
+            // Reset all data
+            function resetData() {
+                if (confirm('Are you sure you want to reset all data? This cannot be undone.')) {
+                    // Reset banks
+                    banks.forEach(bank => {
+                        bank.balance = 0;
+                    });
+                    
+                    // Clear transactions
+                    transactions = [];
+                    
+                    // Update UI and save data
+                    renderBanks();
+                    updateTotalBalance();
+                    renderTransactions();
+                    saveData();
+                    
+                    // Clear search
+                    searchInput.value = '';
+                }
+            }
+
+            // Initialize the app
+            init();
+        });
+    </script>
 </body>
 </html>
