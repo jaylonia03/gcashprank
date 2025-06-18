@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank Widget</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #6366f1;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray: #94a3b8;
+            --danger: #ef4444;
+            --success: #10b981;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background-color: white;
+            color: var(--dark);
+            height: 100vh;
+            padding: 1rem;
+        }
+        
+        .widget-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .widget-bank-icon {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+        
+        .widget-bank-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .balance {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .transactions {
+            margin-bottom: 1.5rem;
+        }
+        
+        .transaction {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            background-color: #f8fafc;
+            margin-bottom: 0.5rem;
+        }
+        
+        .transaction:last-child {
+            margin-bottom: 0;
+        }
+        
+        .transaction-amount.income {
+            color: var(--success);
+        }
+        
+        .transaction-amount.expense {
+            color: var(--danger);
+        }
+        
+        .transaction-desc {
+            font-weight: 500;
+        }
+        
+        .transaction-date {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+        
+        .transaction-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .transaction-controls input {
+            flex: 1;
+            min-width: 120px;
+            padding: 0.75rem;
+            border: 1px solid var(--gray);
+            border-radius: 0.5rem;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+        
+        .btn.primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn.primary:hover {
+            background-color: var(--primary-light);
+        }
+        
+        .btn.success {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .btn.success:hover {
+            background-color: #0d9c6d;
+        }
+        
+        .btn.danger {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .btn.danger:hover {
+            background-color: #dc2626;
+        }
+    </style>
+</head>
+<body>
+    <div id="widgetContent">
+        <!-- Widget content will be loaded here -->
+    </div>
+
+    <script>
+        // Load widget data
+        document.addEventListener('DOMContentLoaded', () => {
+            const widgetData = localStorage.getItem('bankWidgetData');
+            if (widgetData) {
+                const data = JSON.parse(widgetData);
+                const bank = getBankById(data.bankId);
+                
+                if (bank) {
+                    renderWidget(bank, data.transactions);
+                }
+            }
+        });
+        
+        // Get bank by ID
+        function getBankById(bankId) {
+            const banks = [
+                { id: 'gcash', name: 'GCash', icon: '../assets/images/gcash.png' },
+                { id: 'maya', name: 'Maya', icon: '../assets/images/maya.png' },
+                { id: 'atome', name: 'Atome', icon: '../assets/images/atome.png' },
+                { id: 'gotyme', name: 'GoTyme', icon: '../assets/images/gotyme.png' },
+                { id: 'cimb', name: 'CIMB Bank', icon: '../assets/images/cimb.png' },
+                { id: 'paypal', name: 'PayPal', icon: '../assets/images/paypal.png' },
+                { id: 'seabank', name: 'SeaBank', icon: '../assets/images/seabank.png' },
+                { id: 'unionbank', name: 'UnionBank', icon: '../assets/images/unionbank.png' },
+                { id: 'cebuana', name: 'Cebuana e-savings', icon: '../assets/images/cebuana.png' },
+                { id: 'wise', name: 'Wise', icon: '../assets/images/wise.png' }
+            ];
+            
+            return banks.find(b => b.id === bankId);
+        }
+        
+        // Render widget
+        function renderWidget(bank, transactions) {
+            const balance = transactions.reduce((total, t) => total + t.amount, 0);
+            const recentTransactions = transactions.slice(0, 3);
+            
+            let transactionsHTML = '';
+            if (recentTransactions.length === 0) {
+                transactionsHTML = `
+                    <div class="transaction">
+                        <span class="transaction-desc">No transactions yet</span>
+                        <span class="transaction-amount"></span>
+                    </div>
+                `;
+            } else {
+                recentTransactions.forEach(t => {
+                    transactionsHTML += `
+                        <div class="transaction">
+                            <span class="transaction-desc">${t.description}</span>
+                            <span class="transaction-amount ${t.type}">
+                                ${t.type === 'income' ? '+' : '-'}₱${Math.abs(t.amount).toFixed(2)}
+                            </span>
+                            <span class="transaction-date">${t.date}</span>
+                        </div>
+                    `;
+                });
+            }
+            
+            document.getElementById('widgetContent').innerHTML = `
+                <div class="widget-header">
+                    <img src="${bank.icon}" alt="${bank.name}" class="widget-bank-icon">
+                    <h3 class="widget-bank-name">${bank.name}</h3>
+                </div>
+                <div class="balance">₱${balance.toFixed(2)}</div>
+                <div class="transactions">${transactionsHTML}</div>
+                <div class="transaction-controls">
+                    <input type="number" id="transactionAmount" placeholder="Amount" min="0" step="0.01">
+                    <input type="text" id="transactionDesc" placeholder="Description">
+                    <div class="btn-group">
+                        <button id="addFunds" class="btn success"><i class="fas fa-plus"></i> Add</button>
+                        <button id="deductFunds" class="btn danger"><i class="fas fa-minus"></i> Deduct</button>
+                    </div>
+                </div>
+            `;
+            
+            // Add event listeners for buttons
+            document.getElementById('addFunds').addEventListener('click', () => {
+                addTransaction(true, bank.id);
+            });
+            
+            document.getElementById('deductFunds').addEventListener('click', () => {
+                addTransaction(false, bank.id);
+            });
+        }
+        
+        // Add transaction
+        function addTransaction(isIncome, bankId) {
+            const amount = parseFloat(document.getElementById('transactionAmount').value);
+            const description = document.getElementById('transactionDesc').value.trim();
+            
+            if (!amount || isNaN(amount) || amount <= 0) {
+                alert('Please enter a valid amount');
+                return;
+            }
+            
+            if (!description) {
+                alert('Please enter a description');
+                return;
+            }
+            
+            const widgetData = JSON.parse(localStorage.getItem('bankWidgetData'));
+            if (!widgetData || widgetData.bankId !== bankId) return;
+            
+            const transaction = {
+                id: Date.now(),
+                amount: isIncome ? amount : -amount,
+                description,
+                date: new Date().toLocaleString(),
+                type: isIncome ? 'income' : 'expense'
+            };
+            
+            widgetData.transactions.unshift(transaction);
+            localStorage.setItem('bankWidgetData', JSON.stringify(widgetData));
+            
+            // Reload the widget
+            renderWidget(getBankById(bankId), widgetData.transactions);
+            
+            // Clear inputs
+            document.getElementById('transactionAmount').value = '';
+            document.getElementById('transactionDesc').value = '';
+        }
+    </script>
+</body>
+</html>
