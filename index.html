@@ -3,40 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mobile Legends 2D</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>Bank Spending Tracker Widget Maker</title>
+    <meta name="description" content="Create home screen widgets for your bank spending tracking">
+    <meta name="theme-color" content="#4f46e5">
+    <link rel="manifest" href="manifest.json">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-    <div class="game-container">
-        <canvas id="gameCanvas"></canvas>
-        <div class="ui-overlay">
-            <div class="hero-select">
-                <h2>Select Your Hero</h2>
-                <div class="hero-grid" id="heroGrid"></div>
-            </div>
-            <div class="game-ui hidden">
-                <div class="stats">
-                    <div class="health-bar">
-                        <div class="health-fill" id="playerHealth"></div>
-                    </div>
-                    <div class="mana-bar">
-                        <div class="mana-fill" id="playerMana"></div>
-                    </div>
-                    <div class="level">Level: <span id="playerLevel">1</span></div>
-                    <div class="gold">Gold: <span id="playerGold">300</span></div>
-                </div>
-                <div class="abilities">
-                    <button class="ability" id="ability1">Q</button>
-                    <button class="ability" id="ability2">W</button>
-                    <button class="ability" id="ability3">E</button>
-                    <button class="ability" id="ultimate">R</button>
+    <div class="container">
+        <header>
+            <h1>Bank Spending Tracker</h1>
+            <button id="installBtn" class="install-btn hidden">
+                <i class="fas fa-download"></i> Install App
+            </button>
+        </header>
+        
+        <div class="banks-grid" id="banksGrid">
+            <!-- Banks will be added here by JavaScript -->
+        </div>
+        
+        <div class="widget-preview" id="widgetPreview">
+            <div class="preview-header">
+                <h2 class="preview-title">Widget Preview</h2>
+                <div class="resize-controls">
+                    <button class="resize-btn" id="decreaseSize"><i class="fas fa-search-minus"></i></button>
+                    <button class="resize-btn" id="increaseSize"><i class="fas fa-search-plus"></i></button>
                 </div>
             </div>
+            
+            <div class="widget-container" id="widgetContainer">
+                <div class="widget" id="widgetDisplay">
+                    <!-- Widget content will be added here -->
+                </div>
+            </div>
+            
+            <div class="transaction-controls">
+                <input type="number" id="transactionAmount" placeholder="Amount" min="0" step="0.01">
+                <input type="text" id="transactionDesc" placeholder="Description">
+                <div class="btn-group">
+                    <button id="addFunds" class="btn success"><i class="fas fa-plus"></i> Add</button>
+                    <button id="deductFunds" class="btn danger"><i class="fas fa-minus"></i> Deduct</button>
+                </div>
+            </div>
+            
+            <div class="transactions-list" id="transactionsList">
+                <!-- Transactions will be added here -->
+            </div>
+            
+            <button id="saveWidget" class="btn primary">Save Widget to Home Screen</button>
         </div>
     </div>
-    <script src="js/utils.js"></script>
-    <script src="js/heroes.js"></script>
-    <script src="js/items.js"></script>
-    <script src="js/game.js"></script>
+
+    <script src="assets/js/app.js"></script>
+    <script src="assets/js/widget.js"></script>
 </body>
 </html>
