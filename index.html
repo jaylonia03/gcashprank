@@ -25,19 +25,26 @@
         body {
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             padding: 20px;
             color: #333;
         }
 
         .app-container {
+            width: 100%;
             max-width: 500px;
-            margin: 0 auto;
+            height: 90vh;
+            max-height: 800px;
             background: rgba(255, 255, 255, 0.3);
             backdrop-filter: blur(10px);
             border-radius: 20px;
             box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
             overflow: hidden;
             border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            flex-direction: column;
         }
 
         .header {
@@ -46,6 +53,7 @@
             color: white;
             text-align: center;
             position: relative;
+            flex-shrink: 0;
         }
 
         .header h1 {
@@ -76,6 +84,12 @@
             cursor: pointer;
         }
 
+        .content-area {
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
         .total-balance {
             padding: 20px;
             background: rgba(255, 255, 255, 0.2);
@@ -99,7 +113,7 @@
         }
 
         .bank-list {
-            padding: 0 15px;
+            padding: 0 15px 15px;
         }
 
         .bank-card {
@@ -274,6 +288,7 @@
             background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(5px);
             border-top: 1px solid rgba(255, 255, 255, 0.3);
+            flex-shrink: 0;
         }
 
         .nav-btn {
@@ -299,10 +314,12 @@
         .transactions-page {
             display: none;
             padding: 15px;
+            height: 100%;
         }
 
         .transactions-page.active {
-            display: block;
+            display: flex;
+            flex-direction: column;
         }
 
         .search-bar {
@@ -407,13 +424,21 @@
         }
 
         .home-page {
-            padding-bottom: 70px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
 
         .no-transactions {
             text-align: center;
             padding: 40px 0;
             color: #666;
+        }
+
+        .transactions-container {
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
     </style>
 </head>
@@ -425,26 +450,30 @@
             <p id="pageSubtitle">Spending Tracker for SW</p>
         </div>
 
-        <div class="home-page" id="homePage">
-            <div class="total-balance">
-                <h2>Total Balance</h2>
-                <div class="amount" id="totalBalance">₱0.00</div>
+        <div class="content-area">
+            <div class="home-page" id="homePage">
+                <div class="total-balance">
+                    <h2>Total Balance</h2>
+                    <div class="amount" id="totalBalance">₱0.00</div>
+                </div>
+
+                <div class="bank-list" id="bankList">
+                    <!-- Banks will be added here dynamically -->
+                </div>
             </div>
 
-            <div class="bank-list" id="bankList">
-                <!-- Banks will be added here dynamically -->
+            <div class="transactions-page" id="transactionsPage">
+                <div class="search-bar">
+                    <i>🔍</i>
+                    <input type="text" id="searchInput" placeholder="Search transactions...">
+                </div>
+                <div class="transactions-container">
+                    <div id="transactionsList">
+                        <!-- Transactions will be added here dynamically -->
+                    </div>
+                </div>
+                <button class="reset-btn" id="resetBtn">Reset All Data</button>
             </div>
-        </div>
-
-        <div class="transactions-page" id="transactionsPage">
-            <div class="search-bar">
-                <i>🔍</i>
-                <input type="text" id="searchInput" placeholder="Search transactions...">
-            </div>
-            <div id="transactionsList">
-                <!-- Transactions will be added here dynamically -->
-            </div>
-            <button class="reset-btn" id="resetBtn">Reset All Data</button>
         </div>
 
         <div class="modal" id="transactionModal">
@@ -693,7 +722,7 @@
 
             // Show home page
             function showHomePage() {
-                homePage.style.display = 'block';
+                homePage.style.display = 'flex';
                 transactionsPage.style.display = 'none';
                 backBtn.style.display = 'none';
                 pageTitle.textContent = 'SW Tracker';
@@ -703,7 +732,7 @@
             // Show transactions page
             function showTransactionsPage() {
                 homePage.style.display = 'none';
-                transactionsPage.style.display = 'block';
+                transactionsPage.style.display = 'flex';
                 backBtn.style.display = 'block';
                 pageTitle.textContent = 'Transactions';
                 pageSubtitle.textContent = 'All your transactions';
